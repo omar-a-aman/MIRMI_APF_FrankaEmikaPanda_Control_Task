@@ -1,0 +1,31 @@
+    <mujoco model="path_planning">
+        <visual>
+            <headlight diffuse="0.6 0.6 0.6" ambient="0.1 0.1 0.1" specular="0 0 0"/>
+            <global azimuth="120" elevation="-20"/>
+        </visual>
+        <asset>
+            <texture name="grid" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2" width="512" height="512"
+                mark="cross" markrgb=".8 .8 .8"/>
+            <material name="grid" texture="grid" texrepeat="1 1" texuniform="true"/>
+        </asset>
+        <worldbody>
+            <!-- Start Marker -->
+            <geom name="floor" size="1 1 0.01" type="plane" material="grid"/>
+            <body name="start_marker" pos="0.55 0 0.6">
+                <geom type="sphere" size="0.01" rgba="0 1 0 1" />
+            </body>
+            <!-- Goal Marker -->
+            <body name="goal_marker" pos="0.3 -0.1 0.3">
+                <geom type="sphere" size="0.01" rgba="1 0 0 1" />
+            </body>
+            <!-- Obstacle -->
+            <body name="obstacle" pos="0.4 0 0.4">
+                <geom type="sphere" size="0.08" rgba="1 0.5 0 0.5" />
+            </body>
+            <!-- Movable Agent -->
+            <body name="agent" pos="0.55 0 0.6">
+                <geom type="sphere" size="0.01" rgba="0 0 1 1" />
+                <joint name="agent_joint_x" type="free" axis="1 0 0" />
+            </body>
+        </worldbody>
+    </mujoco>

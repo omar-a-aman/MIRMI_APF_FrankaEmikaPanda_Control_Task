@@ -1,11 +1,21 @@
 import numpy as np
 import mujoco
-import mujoco_viewer
+import mujoco.viewer
 import time
+from os.path import dirname, abspath
+
+
+model_path = dirname(dirname(abspath(__file__)))
+urdf_filename = "start_goal_obstacle_trajectory_viz.xml"
+urdf_model_path = model_path + "/models/" + urdf_filename
+
+# Load the model and data.
+model = mujoco.MjModel.from_xml_path(urdf_model_path)
+data = mujoco.MjData(model)
 
 class ArtificialPotentialFields3D:
     def __init__(self, start, goal, obstacle_center, obstacle_radius, 
-                 alpha=10.0, beta=100.0, rho_0=4.0, step_size=0.01, max_iters=1000):
+                 alpha=10.0, beta=100.0, rho_0=4.0, step_size=0.01, max_iters=10000,resolution = 1e-5):
         """
         Initialize the APF planner.
         :param start: Starting position as [x, y, z].
@@ -27,7 +37,8 @@ class ArtificialPotentialFields3D:
         self.rho_0 = rho_0
         self.step_size = step_size
         self.max_iters = max_iters
-    
+        self.resolutin = resolution
+
     def attractive_potential(self, pos):
         """Compute attractive potential and its gradient."""
         diff = pos - self.goal
@@ -68,7 +79,7 @@ class ArtificialPotentialFields3D:
             path.append(pos.copy())
             
             # Check for convergence
-            if np.linalg.norm(pos - self.goal) < 1e-5:
+            if np.linalg.norm(pos - self.goal) < self.resolutin:
                 print(f"Goal reached in {i} iterations.")
                 break
         else:
@@ -76,78 +87,48 @@ class ArtificialPotentialFields3D:
         
         return np.array(path)
 
-
-def create_mujoco_model(start, goal, obstacle_center, obstacle_radius):
-    """
-    Creates a simple MuJoCo XML model for path visualization.
-    """
-    mjcf = f"""
-    <mujoco model="path_planning">
-        <worldbody>
-            <!-- Start Marker -->
-            <geom type="plane" size="20 20 0.1" rgba="1 1 1 1"/>
-            <body name="start_marker" pos="{start[0]} {start[1]} {start[2]}">
-                <geom type="sphere" size="0.1" rgba="0 1 0 1" />
-            </body>
-            <!-- Goal Marker -->
-            <body name="goal_marker" pos="{goal[0]} {goal[1]} {goal[2]}">
-                <geom type="sphere" size="0.2" rgba="1 0 0 1" />
-            </body>
-            <!-- Obstacle -->
-            <body name="obstacle" pos="{obstacle_center[0]} {obstacle_center[1]} {obstacle_center[2]}">
-                <geom type="sphere" size="{obstacle_radius}" rgba="1 0.5 0 0.5" />
-            </body>
-            <!-- Movable Agent -->
-            <body name="agent" pos="{start[0]} {start[1]} {start[2]}">
-                <geom type="sphere" size="0.1" rgba="0 0 1 1" />
-                <joint name="agent_joint_x" type="slide" axis="1 0 0" />
-                <joint name="agent_joint_y" type="slide" axis="0 1 0" />
-                <joint name="agent_joint_z" type="slide" axis="0 0 1" />
-            </body>
-        </worldbody>
-    </mujoco>
-    """
-    return mjcf
-
-def simulate_path(path, model_xml):
+def simulate_path(path):
     """
     Simulates the agent's path in MuJoCo.
     """
-    # Load the model
-    model = mujoco.MjModel.from_xml_string(model_xml)
-    data = mujoco.MjData(model)
-    
     # Create the viewer
-    viewer = mujoco_viewer.MujocoViewer(model, data)
-    viewer.cam.elevation = -90
-    viewer.cam.distance = 40
-    viewer.cam.azimuth = 180
+    with mujoco.viewer.launch_passive(
+        model=model,
+        data=data,
+        show_left_ui=False,
+        show_right_ui=False,
+    ) as viewer:
+        # Reset the free camera.
+        mujoco.mjv_defaultFreeCamera(model, viewer.cam)
 
-    # Simulate the path
-    i = 1
-    for point in path:
-        data.qpos[:3] = point  # Update agent's position
-        mujoco.mj_step(model, data)  # Step the simulation
-        print(point)
-        viewer.render()  # Render the scene
-        time.sleep(0.1)
-        i+=1
-    viewer.close()
+        # Enable site frame visualization.
+        viewer.opt.frame = mujoco.mjtFrame.mjFRAME_SITE
 
+        # Simulate the path
+        for point in path:
+            data.qpos[0] = point [0] # Update agent's position
+            data.qpos[1] = point [1]
+            data.qpos[2] = point [2]
+            print("point is ", point)
+            mujoco.mj_step(model, data)
+            viewer.sync()
+            time.sleep(0.05)
+
+    
+    
 # Example usage
 if __name__ == "__main__":
     # Define parameters
-    start = [0, 0, 0]
-    goal = [10, 15, 5]
-    obstacle_center = [5, 5, 2]
-    obstacle_radius = 2
+    start = [0.55, 0.0, 0.6]
+    goal = [0.3, -0.1, 0.3]
+    obstacle_center = [0.4, 0, 0.4]
+    obstacle_radius = 0.08
 
     # Generate the path using the ArtificialPotentialFields3D
-    apf = ArtificialPotentialFields3D(start, goal, obstacle_center, obstacle_radius)
+    apf = ArtificialPotentialFields3D(start, goal, obstacle_center, obstacle_radius
+                                           ,alpha=1, beta=0.01,rho_0=0.09,step_size=0.01,resolution=1e-5)
+    
     path = apf.plan()
-
-    # Create the MuJoCo model XML
-    mujoco_model = create_mujoco_model(start, goal, obstacle_center, obstacle_radius)
-
+    
     # Simulate the path in MuJoCo
-    simulate_path(path, mujoco_model)
+    simulate_path(path)
