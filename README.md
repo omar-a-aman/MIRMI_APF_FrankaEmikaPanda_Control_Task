@@ -17,7 +17,8 @@ Finally, the Franka Emika Panda was imported from the [Mujoco Menagerie](https:/
 <p align="center">
 $V=J^†ke + Nd(q_c - q)$
 </p>
-<center>
+
+<div align="center">
 | Variable      | Indication                                   |
 |:-------------:|:--------------------------------------------:|
 |$`V`$          | Joints Velocities                            |
@@ -30,7 +31,7 @@ $V=J^†ke + Nd(q_c - q)$
 |$`q_c`$        | The joint center $`q_c = 0.5(q_{min}+ q_{max})`$|
 |$`q_{min}`$    | Minimum Joint Position                       |
 |$`q_{max}`$    | Maximum Joint Position                       |
-</center>
+</div>
 
 The implementation in the Python [script](scripts/Franka_Emika_Panda_Control.py) is a derivation of the work of [kevinzakka](https://github.com/kevinzakka) from his [mjctrl repository](https://github.com/kevinzakka/mjctrl).
 
