@@ -17,3 +17,15 @@ Finally, the Franka Emika Panda was imported from the [Mujoco Menagerie](https:/
 
 $`V=J^†ke + Nd(q_c - q)`$
 
+| Variable    | Indication                                   |
+|-------------|:--------------------------------------------:|
+|$`V`$        | Joints Velocities                            |
+|$`J^†`$      | Moore-Penrose pseudoinverse of the Jacobian  |
+|$`k,d`$      | The proportional gains > 0                   |
+|$`e`$        | The task space error $`e = x - x_d `$        |
+|$`x`$        | Current end effector pose                    |
+|$`x_d`$      | Desired end effector pose                    |
+|$`N`$        | The Null Space Projector $`N = I - J^†J `$   |
+|$`q_c`$      | The joint center $`q_c = 0.5(q_min + q_max)`$|
+|$`q_min`$    | Minimum Joint Position                       |
+|$`q_max`$    | Maximum Joint Position                       |
