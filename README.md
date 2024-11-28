@@ -15,5 +15,5 @@ https://github.com/user-attachments/assets/9925d885-e498-42f8-8b15-8ece79832031
 ## Franka Emika Panda Control:
 Finally, the Franka Emika Panda was imported from the [Mujoco Menagerie](https://github.com/google-deepmind/mujoco_menagerie/tree/main) as shown in this [directory](models/franka_emika_panda). The [script](scripts/Franka_Emika_Panda_Control.py) imports the panda and the start, goal, and obstacle setup, utilizes the motion planner in [APF.pt](scripts/APF.py) and controls the joint velocities according to the following control law:
 
-$`\V=J<sup>†</sup>ke + Nd(q<sub>c</sub> - q)`$
+$`V=J^†ke + Nd(q_c - q)`$
 
