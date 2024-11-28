@@ -26,6 +26,6 @@ $`V=J^†ke + Nd(q_c - q)`$
 |$`x`$        | Current end effector pose                    |
 |$`x_d`$      | Desired end effector pose                    |
 |$`N`$        | The Null Space Projector $`N = I - J^†J `$   |
-|$`q_c`$      | The joint center $`q_c = 0.5(q_min + q_max)`$|
-|$`q_min`$    | Minimum Joint Position                       |
-|$`q_max`$    | Maximum Joint Position                       |
+|$`q_c`$      | The joint center $`q_c = 0.5(q_(min) + q_(max))`$|
+|$`q_(min)`$    | Minimum Joint Position                       |
+|$`q_(max)`$    | Maximum Joint Position                       |
