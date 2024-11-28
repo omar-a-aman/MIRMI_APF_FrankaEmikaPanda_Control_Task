@@ -16,22 +16,23 @@ https://github.com/user-attachments/assets/9925d885-e498-42f8-8b15-8ece79832031
 Finally, the Franka Emika Panda was imported from the [Mujoco Menagerie](https://github.com/google-deepmind/mujoco_menagerie/tree/main) as shown in this [directory](models/franka_emika_panda). The [script](scripts/Franka_Emika_Panda_Control.py) imports the panda and the start, goal, and obstacle setup, utilizes the motion planner in [APF.py](scripts/APF.py) and controls the joint velocities according to the following control law:
 <p align="center">
 $V=J^†ke + Nd(q_c - q)$
-
-| Variable    | Indication                                   |
-|-------------|:--------------------------------------------:|
-|$`V`$        | Joints Velocities                            |
-|$`J^†`$      | Moore-Penrose pseudoinverse of the Jacobian  |
-|$`k,d`$      | The proportional gains > 0                   |
-|$`e`$        | The task space error $`e = x - x_d `$        |
-|$`x`$        | Current end effector pose                    |
-|$`x_d`$      | Desired end effector pose                    |
-|$`N`$        | The Null Space Projector $`N = I - J^†J `$   |
-|$`q_c`$      | The joint center $`q_c = 0.5(q_{min}+ q_{max})`$|
-|$`q_{min}`$     | Minimum Joint Position                       |
-|$`q_{max}`$    | Maximum Joint Position                       |
 </p>
+<center>
+| Variable      | Indication                                   |
+|:-------------:|:--------------------------------------------:|
+|$`V`$          | Joints Velocities                            |
+|$`J^†`$        | Moore-Penrose pseudoinverse of the Jacobian  |
+|$`k,d`$        | The proportional gains > 0                   |
+|$`e`$          | The task space error $`e = x - x_d `$        |
+|$`x`$          | Current end effector pose                    |
+|$`x_d`$        | Desired end effector pose                    |
+|$`N`$          | The Null Space Projector $`N = I - J^†J `$   |
+|$`q_c`$        | The joint center $`q_c = 0.5(q_{min}+ q_{max})`$|
+|$`q_{min}`$    | Minimum Joint Position                       |
+|$`q_{max}`$    | Maximum Joint Position                       |
+</center>
 
-The implementation in the Python [script](scripts/Franka_Emika_Panda_Control.py) is a derivation of the work of [kevinzakka](https://github.com/kevinzakka) from his [mjctrl repository](https://github.com/kevinzakka/mjctrl)
+The implementation in the Python [script](scripts/Franka_Emika_Panda_Control.py) is a derivation of the work of [kevinzakka](https://github.com/kevinzakka) from his [mjctrl repository](https://github.com/kevinzakka/mjctrl).
 
 ### Panda Imported in Mujoco:
 ![Panda](https://github.com/user-attachments/assets/2c4fcf4c-ea9e-4690-83b5-18a743c065e4)
